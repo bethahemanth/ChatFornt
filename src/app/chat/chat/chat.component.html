@@ -1,24 +1,27 @@
-<div>
-    <!-- Messages Section -->
-    <div class="messages">
-        <div *ngFor="let message of messages" [ngClass]="{'sent': message.sender_id === user.user_id, 'received': message.sender_id !== user.user_id}">
+<div class="chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="profile">
+            <img src="https://via.placeholder.com/40" alt="User Avatar">
+            <span>{{ receiver }}</span>
+        </div>
+    </div>
+
+    <div class="messages" *ngIf="messages.length > 0" #messagesContainer>
+        <div *ngFor="let message of messages" 
+             [ngClass]="{'sent': message.sender_id === user.user_id, 'received': message.sender_id !== user.user_id}">
             <div class="message-content">
                 <p>{{ message.message }}</p>
                 <span class="timestamp">{{ message.created_at | date:'shortTime' }}</span>
             </div>
         </div>
-    </div>
+    </div>    
+    <div *ngIf="messages.length === 0" class="no-messages">No messages yet</div>
 
     <!-- Text Box Section -->
     <div class="text-box">
         <form (ngSubmit)="sendMessage()">
-            <input 
-                type="text" 
-                [(ngModel)]="messageText" 
-                name="messageText" 
-                placeholder="Type a message..." 
-                required 
-                class="message-input">
+            <input type="text" [(ngModel)]="messageText" name="messageText" placeholder="Type a message..." required class="message-input">
             <button type="submit" class="send-button">Send</button>
         </form>
     </div>

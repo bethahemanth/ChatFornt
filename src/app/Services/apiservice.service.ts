@@ -22,7 +22,7 @@ export class APIServiceService {
   }
 
   GetUserByID(id: number): Observable<any> {
-    const getUserUrl = `${this.url}/GetUser?id=${id}`;
+    const getUserUrl = `http://localhost:5195/api/User/GetUserByID?id=${id}`;
     return this.http.get<any>(getUserUrl);
   }
 
