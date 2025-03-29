@@ -1,3 +1,4 @@
+import { Message } from './../Models/Message';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -40,5 +41,14 @@ export class APIServiceService {
     return this.http.get<any>(getContactUrl);
   }
 
+  SendMessage(message:Message): Observable<any> {
+    const sendMessageUrl = `http://localhost:5195/api/messages/send`;
+    return this.http.post(sendMessageUrl,message,{responseType: 'text'});
+  }
+
+  GetAllMessages(userId: number, receiverId: number): Observable<any> {
+    const getMessagesUrl = `http://localhost:5195/api/messages/history?userId=${userId}&receiverId=${receiverId}`;
+    return this.http.get<any>(getMessagesUrl);
+  }
 
 }

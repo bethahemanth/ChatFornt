@@ -1,11 +1,23 @@
-<div>
-    <button (click)="logout()">Logout</button>
-    <div class="search-bar"></div>
-    <div class="contacts">
-        <div class="contact">
-            <div class="profile-picture"></div>
-            <div class="name"></div>
-        </div>
+<div class="container">
+    <div class="header">
+      <button class="logout-btn" (click)="logout()">Logout</button>
+      <div class="search-bar">
+        <input type="text" placeholder="Search Contacts" />
+      </div>
     </div>
-    <div class="new-contact"></div>
-</div>
+  
+    <div class="contacts">
+      <a *ngFor="let contact of contacts" [routerLink]="'/chat'" [queryParams]="{ id: contact.user_id }">
+        <div class="contact">
+          <div class="profile-picture">
+            <img [src]="contact.profile_picture" alt="{{ contact.username }}" />
+          </div>
+          <div class="name">{{ contact.username }}</div>
+        </div>
+      </a>
+    </div>
+  
+    <div class="new-contact">
+      <button class="new-contact-btn">Add New Contact</button>
+    </div>
+  </div>

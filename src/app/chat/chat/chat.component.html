@@ -1,1 +1,25 @@
-<p>chat works!</p>
+<div>
+    <!-- Messages Section -->
+    <div class="messages">
+        <div *ngFor="let message of messages" [ngClass]="{'sent': message.sender_id === user.user_id, 'received': message.sender_id !== user.user_id}">
+            <div class="message-content">
+                <p>{{ message.message }}</p>
+                <span class="timestamp">{{ message.created_at | date:'shortTime' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text Box Section -->
+    <div class="text-box">
+        <form (ngSubmit)="sendMessage()">
+            <input 
+                type="text" 
+                [(ngModel)]="messageText" 
+                name="messageText" 
+                placeholder="Type a message..." 
+                required 
+                class="message-input">
+            <button type="submit" class="send-button">Send</button>
+        </form>
+    </div>
+</div>
