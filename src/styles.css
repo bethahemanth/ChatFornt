@@ -23,3 +23,11 @@ app-chat{
     align-items: center;
     justify-content: flex-start;
 }
+app-group-chat{
+    width: 95%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}

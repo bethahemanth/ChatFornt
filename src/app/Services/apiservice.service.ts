@@ -62,4 +62,29 @@ export class APIServiceService {
     return this.http.get<any>(getUsersUrl);
   }
 
+  GetGroupsOfUser(id: number): Observable<any> {
+    const getGroupsUrl = `http://localhost:5195/api/groups/groupid/${id}`;
+    return this.http.get<any>(getGroupsUrl);
+  }
+  GetGroupInfo(id: number): Observable<any> {
+    const getGroupUrl = `http://localhost:5195/api/groups/GetGroupInfo?id=${id}`;
+    return this.http.get<any>(getGroupUrl);
+  }
+
+  GetMembersOfGroup(id: number): Observable<any> {
+    const getMembersUrl = `http://localhost:5195/api/groups/members/${id}`;
+    return this.http.get<any>(getMembersUrl);
+  }
+
+  GetGroupOwner(id: number): Observable<any> {
+    const getGroupOwnerUrl = `http://localhost:5195/api/groups/owner/${id}`;
+    // const getGroupOwnerUrl = `http://localhost:5195/api/groups/GetGroupOwner?id=${id}`;
+    return this.http.get<any>(getGroupOwnerUrl);
+  }
+
+  GetGroupMessages(id: number): Observable<any> {
+    const getGroupMessagesUrl = `http://localhost:5195/api/messages/GetGroupMessage?id=${id}`;
+    return this.http.get<any>(getGroupMessagesUrl);
+  }
+
 }

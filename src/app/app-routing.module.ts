@@ -4,11 +4,13 @@ import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat/chat.component';
 import { NewChatComponent } from './chat/new-chat/new-chat.component';
+import { GroupChatComponent } from './chat/group-chat/group-chat.component';
 
 const routes: Routes = [
   { path: 'chat', component: ChatComponent },
   {path:'new-chat', component:NewChatComponent},
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent },
+  { path:'group', component: GroupChatComponent },
 ];
 
 @NgModule({

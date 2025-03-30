@@ -14,6 +14,12 @@
 
   <!-- Contacts List -->
   <div class="contacts">
+    <!-- Display message if no contacts exist -->
+    <div *ngIf="filteredContacts.length === 0" class="no-contacts">
+      No contacts found. Please search for contacts.
+    </div>
+
+    <!-- Display contacts if they exist -->
     <a *ngFor="let contact of filteredContacts" [routerLink]="'/chat'" [queryParams]="{ id: contact.user_id }">
       <div class="contact">
         <div class="profile-picture">
@@ -22,7 +28,17 @@
         <div class="name">{{ contact.username }}</div>
       </div>
     </a>
+    <!-- Display groups if they exist -->
+    <a *ngFor="let group of filteredGroups" [routerLink]="'/group'" [queryParams]="{ id: group.group_id }">
+      <div class="group">
+        <div class="profile-picture">
+          <img [src]="" alt="{{ group.group_name }}" />
+        </div>
+        <div class="name">{{ group.group_name }}</div>
+      </div>
+    </a>
   </div>
+
 
   <div class="new-contact">
     <button class="plus-btn" (click)="toggleMenu()">+</button>
@@ -31,5 +47,4 @@
       <button routerLink="/create-group">Create a Group</button>
     </div>
   </div>
-  
 </div>

@@ -1,0 +1,44 @@
+<div class="chat-container">
+  <!-- Chat Header -->
+  <div class="chat-header">
+    <div class="profile">
+      <img [src]="" alt="Group Avatar">
+      <span>{{ groupDetails?.group_name }}</span>
+    </div>
+    <div class="dropdown" (click)="toggleDropdown($event)">
+      <button class="dropdown-toggle">Members</button>
+      <div class="dropdown-menu" *ngIf="isDropdownVisible">
+        <div 
+          *ngFor="let member of groupMembers" 
+          class="member" 
+          [ngClass]="{'owner': member.user_id === groupDetails.owner_id}" 
+          (click)="redirectToChat(member.user_id)">
+          <div class="profile-picture">
+            <img [src]="member.profile_picture" alt="{{ member.username }}">
+          </div>
+          <div class="name">{{ member.username }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Section -->
+  <div class="messages" *ngIf="messages.length > 0" #messagesContainer>
+    <div *ngFor="let message of messages" 
+         [ngClass]="{'sent': message.sender_id === user.user_id, 'received': message.sender_id !== user.user_id}">
+      <div class="message-content">
+        <p>{{ message.message }}</p>
+        <span class="timestamp">{{ message.created_at | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="messages.length === 0" class="no-messages">No messages yet</div>
+
+  <!-- Text Box Section -->
+  <div class="text-box">
+    <form (ngSubmit)="sendMessage()">
+      <input type="text" [(ngModel)]="messageText" name="messageText" placeholder="Type a message..." required class="message-input">
+      <button type="submit" class="send-button">Send</button>
+    </form>
+  </div>
+</div>

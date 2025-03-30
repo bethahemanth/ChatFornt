@@ -4,7 +4,7 @@ import { UserService } from "../Services/user.service";
 import { UserDetails } from "../Models/UserDetails";
 import { Router } from '@angular/router';
 import { MessageNotificationService } from '../Services/message-notification.service';  // Import the service
-
+import { Group } from '../Models/Group'; // Assuming you have a Group model defined
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -14,6 +14,8 @@ import { MessageNotificationService } from '../Services/message-notification.ser
 export class SidebarComponent implements OnInit, OnDestroy {
   contacts: UserDetails[] = [];
   filteredContacts: UserDetails[] = [];
+  groups: Group[] = []; // Assuming you have a Group model defined
+  filteredGroups: Group[] = [];
   searchQuery: string = '';
   private messageSentSubscription: any;
   showMenu: boolean = false; // Initialize showMenu to false
@@ -55,6 +57,33 @@ export class SidebarComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.log("Error fetching contacts:", error);
+      }
+    );
+
+    // Fetch groups
+    this.api.GetGroupsOfUser(user.user_id).subscribe(
+      (groupIds: number[]) => {
+        if (groupIds.length === 0) {
+          console.log("No groups found.");
+          return;
+        }
+
+        const groupRequests = groupIds.map(groupId =>
+          this.api.GetGroupInfo(groupId)
+        );
+
+        Promise.all(groupRequests.map(req => req.toPromise())).then(
+          (groups: Group[]) => {
+            this.groups = groups;
+            this.filteredGroups = groups;
+          },
+          (error) => {
+            console.error("Error fetching group info:", error);
+          }
+        );
+      },
+      (error) => {
+        console.error("Error fetching groups:", error);
       }
     );
 
@@ -112,6 +141,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       contact.phone_number.includes(query) // Matches username or phone number
     );
   }
+
+  filterGroups(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+    this.filteredGroups = this.groups.filter(group =>
+      group.group_name.toLowerCase().includes(query)
+    );
+  }
+
   toggleMenu() {
     this.showMenu = !this.showMenu;
   }
