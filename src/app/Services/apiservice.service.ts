@@ -121,8 +121,14 @@ export class APIServiceService {
   }
 
   CreateGroup(group: any): Observable<any> {
-    const createGroupUrl = `http://localhost:5195/api/groups/create`;
+    const createGroupUrl = `http://localhost:5195/api/groups`;
     return this.http.post(createGroupUrl, group, { responseType: 'text' });
   }
+
+  DeleteGroup(groupId: number): Observable<any> {
+    const deleteGroupUrl = `http://localhost:5195/api/groups/members/${groupId}`;
+    return this.http.delete(deleteGroupUrl, { responseType: 'text' });
+  }
+
 
 }
