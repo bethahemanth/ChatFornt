@@ -1,24 +1,118 @@
 <div class="limiter">
 	<div class="container-login100">
-		<div class="wrap-login100 p-t-50 p-b-90">
-			<form class="login100-form validate-form flex-sb flex-w" (ngSubmit)="onSubmit()">
-				<span class="login100-form-title p-b-51">
-					Login
-				</span>
-				<div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
-					<input class="input100" type="Email" name="Email" [(ngModel)]="Email" placeholder="Email">
-					<span class="focus-input100"></span>
-				</div>
-				<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-					<input class="input100" type="password" name="pass" [(ngModel)]="password" placeholder="Password">
-					<span class="focus-input100"></span>
-				</div>
-				<div class="container-login100-form-btn m-t-17">
-					<button class="login100-form-btn" type="submit">
-						Login
-					</button>
-				</div>
-			</form>
+	  <div class="wrap-login100">
+		<!-- Toggle Button -->
+		<div class="toggle-container">
+		  <button (click)="isRegisterMode = false" [class.active]="!isRegisterMode">Login</button>
+		  <button (click)="isRegisterMode = true" [class.active]="isRegisterMode">Register</button>
 		</div>
+  
+		<!-- Login Form -->
+		<div *ngIf="!isRegisterMode">
+			<form class="login100-form validate-form">
+			  <div class="limiter">
+				  <div class="container-login100">
+					  <div class="wrap-login100 p-t-50 p-b-90">
+						  <form class="login100-form validate-form flex-sb flex-w" (ngSubmit)="onSubmit()">
+							  <span class="login100-form-title p-b-51">
+								  Login
+							  </span>
+							  <div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
+								  <input class="input100" type="Email" name="Email" [(ngModel)]="Email" placeholder="Email">
+								  <span class="focus-input100"></span>
+							  </div>
+							  <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
+								  <input class="input100" type="password" name="pass" [(ngModel)]="password" placeholder="Password">
+								  <span class="focus-input100"></span>
+							  </div>
+							  <div class="container-login100-form-btn m-t-17">
+								  <button class="login100-form-btn" type="submit">
+									  Login
+								  </button>
+							  </div>
+						  </form>
+					  </div>
+				  </div>
+			  </div>
+			</form>
+		  </div>
+  
+		<!-- Registration Form -->
+		<div *ngIf="isRegisterMode">
+		  <form class="login100-form validate-form" (ngSubmit)="onRegister()" #registerForm="ngForm">
+			<span class="login100-form-title">Register</span>
+  
+			<div class="wrap-input100 validate-input" data-validate="Username is required">
+			  <input class="input100" type="text" name="username" [(ngModel)]="registerData.username" placeholder="Username" required minlength="3" #username="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="username.invalid && username.touched" class="error">Username is required and must be at least 3 characters long</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Email is required">
+			  <input class="input100" type="email" name="email" [(ngModel)]="registerData.email" placeholder="Email" required 
+                     email pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" #email="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="email.invalid && email.touched" class="error">Email is required and must be valid</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Phone number is required">
+			  <input class="input100" type="text" name="phone_number" [(ngModel)]="registerData.phone_number" placeholder="Phone Number" required pattern="^\d{10}$" #phoneNumber="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="phoneNumber.invalid && phoneNumber.touched" class="error">Phone number must be exactly 10 digits</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Password is required">
+			  <input class="input100" type="password" name="password" [(ngModel)]="registerData.password" placeholder="Password" required 
+                     minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d@$!%*?&]{6,}$" #password="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="password.invalid && password.touched" class="error">
+                Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one special character.
+              </div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Address is required">
+			  <input class="input100" type="text" name="address" [(ngModel)]="registerData.address" placeholder="Address" required #address="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="address.invalid && address.touched" class="error">Address is required</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Country is required">
+			  <input class="input100" type="text" name="country" [(ngModel)]="registerData.country" placeholder="Country" required #country="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="country.invalid && country.touched" class="error">Country is required</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Date of Birth is required">
+				<input class="input100" type="date" name="dateOfBirth" [(ngModel)]="registerData.dateOfBirth" 
+					   placeholder="Date of Birth" required [max]="maxDate" #dob="ngModel"/>
+				<span class="focus-input100"></span>
+				<div *ngIf="dob.invalid && dob.touched" class="error">Date of Birth is required and cannot be a future date</div>
+			  </div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Gender is required">
+			  <select class="input100" name="gender" [(ngModel)]="registerData.gender" required #gender="ngModel">
+				<option value="" disabled selected>Select Gender</option>
+				<option value="Male">Male</option>
+				<option value="Female">Female</option>
+				<option value="Other">Other</option>
+			  </select>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="gender.invalid && gender.touched" class="error">Gender is required</div>
+			</div>
+  
+			<div class="wrap-input100 validate-input" data-validate="Profile Picture URL is required">
+			  <input class="input100" type="text" name="profile_picture" [(ngModel)]="registerData.profile_picture" placeholder="Profile Picture URL" required #profilePic="ngModel"/>
+			  <span class="focus-input100"></span>
+			  <div *ngIf="profilePic.invalid && profilePic.touched" class="error">Profile Picture URL is required</div>
+			</div>
+  
+			<div class="container-login100-form-btn">
+			  <button class="login100-form-btn" type="submit" [disabled]="registerForm.invalid">
+				Register
+			  </button>
+			</div>
+		  </form>
+		</div>
+	  </div>
 	</div>
-</div>
+  </div>

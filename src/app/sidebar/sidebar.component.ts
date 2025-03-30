@@ -1,52 +1,123 @@
-import { UserService } from './../Services/user.service';
-import { Component } from '@angular/core';
-import { APIServiceService } from '../Services/apiservice.service';
-import { UserDetails } from '../Models/UserDetails';
-import { Message } from '../Models/Message';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { APIServiceService } from "../Services/apiservice.service";
+import { UserService } from "../Services/user.service";
+import { UserDetails } from "../Models/UserDetails";
+import { Router } from '@angular/router';
+import { MessageNotificationService } from '../Services/message-notification.service';  // Import the service
 
 @Component({
   selector: 'app-sidebar',
-  standalone: false,
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  standalone: false,
+  styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnDestroy {
+  contacts: UserDetails[] = [];
+  filteredContacts: UserDetails[] = [];
+  searchQuery: string = '';
+  private messageSentSubscription: any;
+  showMenu: boolean = false; // Initialize showMenu to false
 
   constructor(
     private api: APIServiceService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private messageNotificationService: MessageNotificationService  // Inject the service
   ) { }
 
-  contacts:UserDetails[]=[];
-
-  ngOnInit(){
+  ngOnInit() {
     const userString = localStorage.getItem('user');
     const user: UserDetails = userString ? JSON.parse(userString) : null;
     if (!user) {
       console.error('User not found in localStorage');
       return;
     }
+
     this.api.GetContact(user.user_id).subscribe(
-      (data:number[])=>{
-        if(data){
-          console.log("User reciever id for contacts",data);
-          this.api.GetUsersSet(data).subscribe(
-            (users:UserDetails[])=>{
-              this.contacts=users;
-              console.log("User Contacts",this.contacts);
-              console.log("User Details for contacts",user);
-            },
-            (error)=>{
-              console.log(error);
-            }
-          );
+      (data: number[]) => {
+        console.log("User receiver id for contacts", data);
+
+        if (data.length === 0) {
+          console.log("No contacts found. Waiting for new messages...");
+          return;
         }
+
+        this.api.GetUsersSet(data).subscribe(
+          (users: UserDetails[]) => {
+            this.contacts = users;
+            this.filteredContacts = users; // Initialize filteredContacts
+            console.log("User Contacts", this.contacts);
+          },
+          (error) => {
+            console.log("Error fetching users:", error);
+          }
+        );
+      },
+      (error) => {
+        console.log("Error fetching contacts:", error);
+      }
+    );
+
+    // Subscribe to the messageSent observable
+    this.messageSentSubscription = this.messageNotificationService.messageSent$.subscribe(() => {
+      this.reloadContacts();  // Reload contacts when a message is sent
+    });
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe to avoid memory leaks
+    if (this.messageSentSubscription) {
+      this.messageSentSubscription.unsubscribe();
+    }
+  }
+
+  reloadContacts() {
+    const userString = localStorage.getItem('user');
+    const user: UserDetails = userString ? JSON.parse(userString) : null;
+    if (!user) {
+      console.error('User not found in localStorage');
+      return;
+    }
+
+    this.api.GetContact(user.user_id).subscribe(
+      (data: number[]) => {
+        console.log("User receiver id for contacts", data);
+
+        if (data.length === 0) {
+          console.log("No contacts found. Waiting for new messages...");
+          return;
+        }
+
+        this.api.GetUsersSet(data).subscribe(
+          (users: UserDetails[]) => {
+            this.contacts = users;
+            this.filteredContacts = users; // Initialize filteredContacts
+            console.log("User Contacts", this.contacts);
+          },
+          (error) => {
+            console.log("Error fetching users:", error);
+          }
+        );
+      },
+      (error) => {
+        console.log("Error fetching contacts:", error);
       }
     );
   }
 
-  logout(){
-    this.userService.clearUser();
+  filterContacts(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+    this.filteredContacts = this.contacts.filter(contact =>
+      contact.username.toLowerCase().includes(query) || 
+      contact.phone_number.includes(query) // Matches username or phone number
+    );
+  }
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
   }
 
+  logout() {
+    this.router.navigate(['']);
+    this.userService.clearUser();
+  }
 }

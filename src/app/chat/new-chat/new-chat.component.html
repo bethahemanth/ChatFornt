@@ -1,1 +1,34 @@
-<p>new-chat works!</p>
+<div class="new-chat-container">
+  <div class="search">
+    <form (submit)="searchUser($event)">
+      <input
+        type="text"
+        placeholder="Search by Phone Number"
+        [(ngModel)]="phoneNumber"
+        name="phoneNumber"
+        (input)="searchUser($event)"  
+      />
+      <input
+        type="email"
+        placeholder="Search by Email"
+        [(ngModel)]="email"
+        name="email"
+        (input)="searchUser($event)"  
+      />
+      <button type="submit">Search</button>
+    </form>
+
+    <!-- Display the search results as a dropdown only if searchDropdownVisible is true -->
+    <div *ngIf="searchDropdownVisible && searchResults.length > 0" class="search-results-dropdown">
+      <ul>
+        <li *ngFor="let user of searchResults" (click)="selectUser(user)">
+          <p>{{ user.phone_number }} - {{ user.email }}</p>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="searchResults.length === 0 && (phoneNumber || email)" class="result">
+      <p>User not found.</p>
+    </div>
+  </div>
+</div>

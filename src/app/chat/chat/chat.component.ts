@@ -87,6 +87,7 @@ import { ActivatedRoute } from '@angular/router';
 import { APIServiceService } from '../../Services/apiservice.service';
 import { UserDetails } from '../../Models/UserDetails';
 import { Message } from '../../Models/Message';
+import { MessageNotificationService } from '../../Services/message-notification.service';
 
 @Component({
   selector: 'app-chat',
@@ -109,7 +110,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private api: APIServiceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private messageNotificationService: MessageNotificationService  // Inject the service
   ) { }
 
   ngOnInit(): void {
@@ -149,22 +151,39 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
+  // fetchMessages(): void {
+  //   this.api.GetAllMessages(this.user.user_id, this.receiverId).subscribe(
+  //     (data: Message[]) => {
+  //       // Check if new messages are different from existing messages
+  //       const isNewMessage = this.messages.length !== data.length;
+  //       if (isNewMessage) {
+  //         this.messages = data;
+  //         this.newMessageReceived = true; // Set flag to true if a new message is received
+  //         this.scrollToBottomFlag = true; // Set flag to trigger scroll to bottom
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching messages from user to receiver:', error);
+  //     }
+  //   );
+  // }
   fetchMessages(): void {
-    this.api.GetAllMessages(this.user.user_id, this.receiverId).subscribe(
-      (data: Message[]) => {
-        // Check if new messages are different from existing messages
-        const isNewMessage = this.messages.length !== data.length;
-        if (isNewMessage) {
-          this.messages = data;
-          this.newMessageReceived = true; // Set flag to true if a new message is received
-          this.scrollToBottomFlag = true; // Set flag to trigger scroll to bottom
-        }
-      },
-      (error) => {
-        console.error('Error fetching messages from user to receiver:', error);
+  this.api.GetAllMessages(this.user.user_id, this.receiverId).subscribe(
+    (data: Message[]) => {
+      // Filter out messages with empty content
+      const filteredMessages = data.filter(message => message.message.trim() !== '');
+      const isNewMessage = this.messages.length !== filteredMessages.length;
+      if (isNewMessage) {
+        this.messages = filteredMessages;
+        this.newMessageReceived = true; // Set flag to true if a new message is received
+        this.scrollToBottomFlag = true; // Set flag to trigger scroll to bottom
       }
-    );
-  }
+    },
+    (error) => {
+      console.error('Error fetching messages from user to receiver:', error);
+    }
+  );
+}
 
   fetchReceiverDetails(): void {
     this.api.GetUserByID(this.receiverId).subscribe(
@@ -195,6 +214,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.messageText = ''; // Clear the input field
         this.newMessageReceived = true;  // Set flag to true if a new message was sent
         this.scrollToBottomFlag = true;  // Set flag to trigger scroll to bottom
+
+        // Notify the SidebarComponent that a message has been sent
+        this.messageNotificationService.notifyMessageSent();
       },
       (error) => {
         console.error('Error sending message:', error);

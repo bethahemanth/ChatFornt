@@ -1,0 +1,133 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Body */
+  body {
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Container */
+  .new-chat-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  /* Search Form */
+  .search form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .search input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .search input:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  
+  .search button {
+    padding: 0.8rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+  
+  .search button:hover {
+    background-color: #2980b9;
+  }
+  
+  /* Result Message */
+  .result {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .result p {
+    font-size: 1rem;
+  }
+  
+  .result p:nth-child(1) {
+    color: #2ecc71;
+  }
+  
+  .result p:nth-child(2) {
+    color: #e74c3c;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 500px) {
+    .new-chat-container {
+      padding: 1.5rem;
+    }
+  
+    .search input {
+      font-size: 0.9rem;
+      padding: 0.7rem;
+    }
+  
+    .search button {
+      font-size: 0.9rem;
+      padding: 0.7rem;
+    }
+  }
+  
+  /* Dropdown Styles */
+.search-results-dropdown {
+    margin-top: 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    width: 20%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-results-dropdown ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .search-results-dropdown li {
+    padding: 0.8rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .search-results-dropdown li:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .search-results-dropdown li p {
+    margin: 0;
+  }
+  

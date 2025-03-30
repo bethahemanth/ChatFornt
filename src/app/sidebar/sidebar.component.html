@@ -1,23 +1,35 @@
 <div class="side-bar-container">
-    <div class="header">
-      <button class="logout-btn" (click)="logout()">Logout</button>
-      <div class="search-bar">
-        <input type="text" placeholder="Search Contacts" />
-      </div>
-    </div>
-  
-    <div class="contacts">
-      <a *ngFor="let contact of contacts" [routerLink]="'/chat'" [queryParams]="{ id: contact.user_id }">
-        <div class="contact">
-          <div class="profile-picture">
-            <img [src]="contact.profile_picture" alt="{{ contact.username }}" />
-          </div>
-          <div class="name">{{ contact.username }}</div>
-        </div>
-      </a>
-    </div>
-  
-    <div class="new-contact">
-      <button class="new-contact-btn">New Chat</button>
+  <!-- Header Section -->
+  <div class="header">
+    <button class="logout-btn" (click)="logout()">Logout</button>
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search Contacts" 
+        [(ngModel)]="searchQuery" 
+        (input)="filterContacts()" 
+      />
     </div>
   </div>
+
+  <!-- Contacts List -->
+  <div class="contacts">
+    <a *ngFor="let contact of filteredContacts" [routerLink]="'/chat'" [queryParams]="{ id: contact.user_id }">
+      <div class="contact">
+        <div class="profile-picture">
+          <img [src]="contact.profile_picture" alt="{{ contact.username }}" />
+        </div>
+        <div class="name">{{ contact.username }}</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="new-contact">
+    <button class="plus-btn" (click)="toggleMenu()">+</button>
+    <div class="dropdown-menu" *ngIf="showMenu" (mouseleave)="showMenu = false">
+      <button routerLink="/new-chat">New Chat</button>
+      <button routerLink="/create-group">Create a Group</button>
+    </div>
+  </div>
+  
+</div>

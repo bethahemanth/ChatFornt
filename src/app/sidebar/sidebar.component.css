@@ -1,3 +1,4 @@
+/* Sidebar Container */
 .side-bar-container {
   display: flex;
   flex-direction: column;
@@ -96,29 +97,54 @@
   color: #333;
 }
 
-/* Bottom Section - Add Contact Button */
+/* Bottom Section - Plus Button & Dropdown */
 .new-contact {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-.new-contact-btn {
-  padding: 12px 20px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
+  position: relative;
   text-align: center;
+  margin-top: 10px;
 }
 
-.new-contact-btn:hover {
-  background-color: #45a049;
+.plus-btn {
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.plus-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f0f0;
 }

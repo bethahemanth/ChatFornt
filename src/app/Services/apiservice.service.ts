@@ -16,6 +16,12 @@ export class APIServiceService {
     const validateUrl = `${this.url}/ValidateUser?Email=${Email}&Password=${password}`;
     return this.http.get<any>(validateUrl);
   }
+
+  RegisterUser(user: any): Observable<any> {
+    const registerUrl = `${this.url}/Register`;
+    return this.http.post(registerUrl, user, { responseType: 'text' });
+  }
+  
   GetUser(email: string, password: string): Observable<any> {
     const getUserUrl = `${this.url}/GetUser?email=${email}&password=${password}`;
     return this.http.get<any>(getUserUrl);
@@ -49,6 +55,11 @@ export class APIServiceService {
   GetAllMessages(userId: number, receiverId: number): Observable<any> {
     const getMessagesUrl = `http://localhost:5195/api/messages/history?userId=${userId}&receiverId=${receiverId}`;
     return this.http.get<any>(getMessagesUrl);
+  }
+
+  GetAllUsers(): Observable<any> {
+    const getUsersUrl = "http://localhost:5195/api/User/GetAllUsers";
+    return this.http.get<any>(getUsersUrl);
   }
 
 }
