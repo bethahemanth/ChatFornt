@@ -3,6 +3,7 @@ import { UserService } from '../Services/user.service';
 import { APIServiceService } from '../Services/apiservice.service';
 import { Router } from '@angular/router';
 import { UserDetails } from '../Models/UserDetails';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,6 @@ import { UserDetails } from '../Models/UserDetails';
 })
 export class LoginComponent {
   validationErrors: { [key: string]: string } = {};
-
   isRegisterMode: boolean = false; // Toggle between login and register
   registerData = {
     user_id: 0,
@@ -21,42 +21,52 @@ export class LoginComponent {
     country: '',
     dateOfBirth: '',
     gender: '',
-    profile_picture: '',
+    profile_picture: '', // Stores uploaded image URL
     email: '',
     phone_number: '',
     password: ''
   };
 
-  
-  onRegister(): void {
-    console.log('Registration Data:', this.registerData);
-    this.apiService.RegisterUser(this.registerData).subscribe(
-      (response) => {
-        alert('Registration Successful!');
-        this.router.navigate(['/login']); 
-      },
-      (error) => {
-        console.error('Error during registration:', error);
-        alert('An error occurred during registration. Please try again.');
-      }
-    );
-  }
-    
   Email: string = '';
   password: string = '';
   nextPage: string = '/dashboard'; // Example route after successful login
-
   maxDate: string;
 
   constructor(
     private userService: UserService,
     private apiService: APIServiceService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     const today = new Date();
-    this.maxDate = today.toISOString().split('T')[0];
+    this.maxDate = today.toISOString().split('T')[0]; // Max date to prevent future DOB
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+  
+    if (file) {
+      this.apiService.UploadProfilePicture(file).subscribe(
+        response => {
+          // ✅ Fix: Ensure correct URL format
+          if (response.imageUrl && !response.imageUrl.startsWith('http')) {
+            this.registerData.profile_picture = `http://localhost:5195/uploads/${response.imageUrl}`;
+          } else {
+            this.registerData.profile_picture = response.imageUrl;
+          }
+  
+          console.log("Uploaded Image URL:", this.registerData.profile_picture);
+        },
+        error => {
+          console.error('Image upload failed:', error);
+          alert('Failed to upload image. Please try again.');
+        }
+      );
+    }
+  }
+  
+
+  // ✅ Login Logic (Restored)
   onSubmit(): void {
     this.apiService.ValidateUser(this.Email, this.password).subscribe(
       (data: any) => {
@@ -66,6 +76,7 @@ export class LoginComponent {
             (userRes: UserDetails) => {
               this.userService.setUser(userRes);
               console.log('User details:', userRes);
+              this.router.navigate([this.nextPage]); // Redirect after login
             },
             (error) => {
               console.error('Error fetching user details:', error);
@@ -79,6 +90,21 @@ export class LoginComponent {
       (error) => {
         console.error('Error during login validation:', error);
         alert('An error occurred. Please try again.');
+      }
+    );
+  }
+
+  // ✅ Register Logic (Restored)
+  onRegister(): void {
+    console.log('Registration Data:', this.registerData);
+    this.apiService.RegisterUser(this.registerData).subscribe(
+      () => {
+        alert('Registration Successful!');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        console.error('Error during registration:', error);
+        alert('An error occurred during registration. Please try again.');
       }
     );
   }

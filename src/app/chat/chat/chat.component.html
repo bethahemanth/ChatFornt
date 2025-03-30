@@ -1,9 +1,8 @@
 <div class="chat-container">
-    <!-- Chat Header -->
     <div class="chat-header">
         <div class="profile">
-            <img src="https://via.placeholder.com/40" alt="User Avatar">
-            <span>{{ receiver }}</span>
+            <img *ngIf="receiverProfilePicture" [src]="receiverProfilePicture" alt="{{ receiver }}" class="profile-pic">
+            <span class="receiver-name">{{ receiver }}</span>
         </div>
     </div>
 
@@ -16,9 +15,10 @@
             </div>
         </div>
     </div>    
+
     <div *ngIf="messages.length === 0" class="no-messages">No messages yet</div>
 
-    <!-- Text Box Section -->
+    <!-- 🔹 Message Input Box -->
     <div class="text-box">
         <form (ngSubmit)="sendMessage()">
             <input type="text" [(ngModel)]="messageText" name="messageText" placeholder="Type a message..." required class="message-input">

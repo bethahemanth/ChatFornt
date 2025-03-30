@@ -18,13 +18,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   filteredGroups: Group[] = [];
   searchQuery: string = '';
   private messageSentSubscription: any;
-  showMenu: boolean = false; // Initialize showMenu to false
+  showMenu: boolean = false;
 
   constructor(
     private api: APIServiceService,
     private userService: UserService,
     private router: Router,
-    private messageNotificationService: MessageNotificationService  // Inject the service
+    private messageNotificationService: MessageNotificationService
   ) { }
 
   ngOnInit() {
@@ -89,20 +89,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     // Subscribe to the messageSent observable
     this.messageSentSubscription = this.messageNotificationService.messageSent$.subscribe(() => {
-      this.reloadContacts();  // Reload contacts when a message is sent
+      this.reloadContacts();
     });
   }
 
   ngOnDestroy() {
-    // Unsubscribe to avoid memory leaks
     if (this.messageSentSubscription) {
       this.messageSentSubscription.unsubscribe();
     }
   }
 
-  reloadContacts() {
+  // ✅ Load contacts initially
+  loadContacts() {
     const userString = localStorage.getItem('user');
     const user: UserDetails = userString ? JSON.parse(userString) : null;
+    
     if (!user) {
       console.error('User not found in localStorage');
       return;
@@ -110,7 +111,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     this.api.GetContact(user.user_id).subscribe(
       (data: number[]) => {
-        console.log("User receiver id for contacts", data);
+        console.log("User receiver id for contacts:", data);
 
         if (data.length === 0) {
           console.log("No contacts found. Waiting for new messages...");
@@ -119,26 +120,39 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
         this.api.GetUsersSet(data).subscribe(
           (users: UserDetails[]) => {
+            this.processProfilePictures(users);
             this.contacts = users;
-            this.filteredContacts = users; // Initialize filteredContacts
-            console.log("User Contacts", this.contacts);
+            this.filteredContacts = users;
+            console.log("User Contacts:", this.contacts);
           },
-          (error) => {
-            console.log("Error fetching users:", error);
-          }
+          (error) => console.log("Error fetching users:", error)
         );
       },
-      (error) => {
-        console.log("Error fetching contacts:", error);
-      }
+      (error) => console.log("Error fetching contacts:", error)
     );
   }
 
+  // ✅ Reload contacts when a message is sent
+  reloadContacts() {
+    console.log("Reloading contacts...");
+    this.loadContacts(); // Just call the loadContacts function
+  }
+
+  // ✅ Prevent duplicate URLs in profile pictures
+  private processProfilePictures(users: UserDetails[]) {
+    users.forEach(user => {
+      if (user.profile_picture && !user.profile_picture.startsWith('http://localhost:5195/uploads/')) {
+        user.profile_picture = `http://localhost:5195/uploads/${user.profile_picture}`;
+      }
+    });
+  }
+
+  // ✅ Filter contacts based on search query
   filterContacts(): void {
     const query = this.searchQuery.toLowerCase().trim();
     this.filteredContacts = this.contacts.filter(contact =>
       contact.username.toLowerCase().includes(query) || 
-      contact.phone_number.includes(query) // Matches username or phone number
+      contact.phone_number.includes(query)
     );
   }
 

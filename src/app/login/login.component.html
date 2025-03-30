@@ -99,12 +99,14 @@
 			  <span class="focus-input100"></span>
 			  <div *ngIf="gender.invalid && gender.touched" class="error">Gender is required</div>
 			</div>
-  
-			<div class="wrap-input100 validate-input" data-validate="Profile Picture URL is required">
-			  <input class="input100" type="text" name="profile_picture" [(ngModel)]="registerData.profile_picture" placeholder="Profile Picture URL" required #profilePic="ngModel"/>
-			  <span class="focus-input100"></span>
-			  <div *ngIf="profilePic.invalid && profilePic.touched" class="error">Profile Picture URL is required</div>
-			</div>
+			<div class="profile-upload">
+				<label class="custom-file-upload">
+				  <input type="file" (change)="onFileSelected($event)" accept="image/*" id="profilePicInput" />
+				  <span id="fileName">📷 Upload Profile Picture</span>
+				</label>
+			  </div>
+			  
+			  
   
 			<div class="container-login100-form-btn">
 			  <button class="login100-form-btn" type="submit" [disabled]="registerForm.invalid">
