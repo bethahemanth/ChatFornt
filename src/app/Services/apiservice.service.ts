@@ -87,4 +87,28 @@ export class APIServiceService {
     return this.http.get<any>(getGroupMessagesUrl);
   }
 
+  GetGroupsOfOwner(id: number): Observable<any> {
+    const getGroupsUrl = `http://localhost:5195/api/groups/groupsbyowner/${id}`;
+    return this.http.get<any>(getGroupsUrl);
+  }
+
+  AddUserToGroup(groupId: number, userId: number): Observable<any> {
+    const addUserUrl = `http://localhost:5195/api/groupmembers/insert`;
+    const dto:any={
+      group_id: groupId,
+      user_id: userId,
+      joined_at: new Date(),
+    }
+    return this.http.post(addUserUrl, dto, { responseType: 'text' });
+  }
+  DeleteUserFromGroup(groupId: number, userId: number): Observable<any> {
+    const deleteUserUrl = `http://localhost:5195/api/groupmembers/delete/${userId}?group_id=${groupId}`;
+    return this.http.delete(deleteUserUrl, { responseType: 'text' });
+  }
+
+  CreateGroup(group: any): Observable<any> {
+    const createGroupUrl = `http://localhost:5195/api/groups/create`;
+    return this.http.post(createGroupUrl, group, { responseType: 'text' });
+  }
+
 }
