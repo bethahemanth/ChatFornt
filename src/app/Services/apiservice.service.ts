@@ -1,7 +1,7 @@
 import { Message } from './../Models/Message';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,13 @@ export class APIServiceService {
     return this.http.get<any>(validateUrl);
   }
 
+  UploadProfilePicture(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    return this.http.post<{ imageUrl: string }>('http://localhost:5195/api/User/UploadProfilePicture', formData);
+  }
+
   RegisterUser(user: any): Observable<any> {
     const registerUrl = `${this.url}/Register`;
     return this.http.post(registerUrl, user, { responseType: 'text' });
@@ -28,9 +35,16 @@ export class APIServiceService {
   }
 
   GetUserByID(id: number): Observable<any> {
-    const getUserUrl = `http://localhost:5195/api/User/GetUserByID?id=${id}`;
-    return this.http.get<any>(getUserUrl);
+    return this.http.get<any>(`${this.url}/GetUserByID?id=${id}`).pipe(
+      map((user: any) => {
+        if (user.profile_picture) {
+          user.profile_picture = `http://localhost:5195/uploads/${user.profile_picture}`;
+        }
+        return user;
+      })
+    );
   }
+  
 
   GetContact(id: number): Observable<any> {
     const getContactUrl = `http://localhost:5195/api/messages/GetContacts?id=${id}`;
