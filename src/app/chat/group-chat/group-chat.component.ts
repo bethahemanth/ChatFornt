@@ -152,6 +152,20 @@ export class GroupChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.router.navigate(['/chat'], { queryParams: { id: userId } });
   }
 
+  deleteMessage(messageId: number): void {
+    if (!confirm('Are you sure you want to delete this message?')) return;
+
+    this.api.DeleteMessage(messageId).subscribe(
+      () => {
+        this.messages = this.messages.filter(msg => msg.message_id !== messageId);
+        this.api.CustomAlert('Message deleted successfully!');
+      },
+      (error) => {
+        console.error('Error deleting message:', error);
+      }
+    );
+  }
+
   scrollToBottom(): void {
     try {
       this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;

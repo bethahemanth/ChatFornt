@@ -1,0 +1,51 @@
+<div class="tab-container">
+  <!-- Tab Buttons -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'create'" (click)="setActiveTab('create')">Create Group</button>
+    <button [class.active]="activeTab === 'manage'" (click)="setActiveTab('manage')">Manage Group</button>
+  </div>
+
+  <!-- Create Group Tab -->
+  <div *ngIf="activeTab === 'create'" class="tab-content">
+    <form (ngSubmit)="createGroup()">
+      <div class="form-group">
+        <label for="groupName">Group Name</label>
+        <input type="text" id="groupName" [(ngModel)]="newGroupName" name="groupName" required />
+      </div>
+      <input type="hidden" [(ngModel)]="currentUserId" name="currentUserId" />
+      <button type="submit" class="btn">Create Group</button>
+    </form>
+  </div>
+
+  <!-- Manage Group Tab -->
+  <div *ngIf="activeTab === 'manage'" class="tab-content">
+    <form>
+      <div class="form-group">
+        <label for="groupSelect">Select Group</label>
+        <select id="groupSelect" [(ngModel)]="selectedGroupId" name="groupSelect" (change)="loadGroupMembers()">
+          <option *ngFor="let group of ownedGroups" [value]="group.group_id">{{ group.group_name }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="groupMembers.length > 0" class="members-list">
+        <h3>Group Members</h3>
+        <div *ngFor="let member of groupMembers" class="member">
+          <span>{{ member.username }}</span>
+          <button type="button" class="btn-delete" (click)="removeMember(member.user_id)">Delete</button>
+        </div>
+      </div>
+
+      <div *ngIf="groupMembers.length === 0" class="no-members">
+        No members in this group.
+      </div>
+
+      <div class="add-member">
+        <label for="addMemberSelect">Add New Member</label>
+        <select id="addMemberSelect" [(ngModel)]="selectedNewMemberId" name="addMemberSelect">
+          <option *ngFor="let user of allUsers" [value]="user.user_id">{{ user.username }}</option>
+        </select>
+        <button type="button" class="btn" (click)="addMember()">Add Member</button>
+      </div>
+    </form>
+  </div>
+</div>

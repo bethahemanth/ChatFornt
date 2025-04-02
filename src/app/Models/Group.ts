@@ -3,4 +3,8 @@ export interface Group{
     owner_id: number;
     group_name: string;
     created_at: Date;
+    unreadCount?: number;
+    latestMessagePreview?: string;
+    latestMessageTimestamp?: Date;
+    profile_picture?: string;
 }

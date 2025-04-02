@@ -5,6 +5,9 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class MessageNotificationService {
+  notifyNewMessage(arg0: { senderId: number; receiverId: number; message: string; }) {
+    throw new Error('Method not implemented.');
+  }
   private messageSentSource = new Subject<void>();
   messageSent$ = this.messageSentSource.asObservable();
 

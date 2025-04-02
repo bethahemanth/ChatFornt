@@ -18,6 +18,7 @@
 body, html {
     height: 100%;
     font-family: Ubuntu-Regular, sans-serif;
+    /* background-image: url('assets/images/background.jpg'); */
 }
 
 /*---------------------------------------------*/
@@ -351,7 +352,7 @@ iframe {
   position: relative;
 }
 
-.alert-validate::before {
+.this.api.CustomAlert-validate::before {
   content: attr(data-validate);
   position: absolute;
   max-width: 70%;
@@ -383,7 +384,7 @@ iframe {
   transition: opacity 0.4s;
 }
 
-.alert-validate::after {
+.this.api.CustomAlert-validate::after {
   content: "\f12a";
   font-family: FontAwesome;
   display: block;
@@ -399,13 +400,13 @@ iframe {
   right: 18px;
 }
 
-.alert-validate:hover:before {
+.this.api.CustomAlert-validate:hover:before {
   visibility: visible;
   opacity: 1;
 }
 
 @media (max-width: 992px) {
-  .alert-validate::before {
+  .this.api.CustomAlert-validate::before {
     visibility: visible;
     opacity: 1;
   }
@@ -3471,4 +3472,46 @@ iframe {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 180px; /* Adjust based on layout */
+}
+
+/* Wrapper for the text and form sections */
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Text Section Styling */
+.text-section {
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+}
+.app-title {
+  font-size: 100px; /* Increased font size for a bigger title */
+  font-weight: 900; /* Bold and prominent */
+  color: #403866; /* Darker color for better contrast */
+  margin-bottom: 20px; /* Added more spacing below the title */
+  text-transform: uppercase; /* Makes the text uppercase for emphasis */
+  letter-spacing: 2px; /* Adds spacing between letters for a modern look */
+}
+
+.app-description {
+  font-size: 20px; /* Slightly larger font size for the description */
+  color: #665c99; /* Softer color for the description */
+  line-height: 1.8; /* Increased line height for better readability */
+  margin-top: 10px; /* Added spacing above the description */
+}
+
+/* Form Section Styling */
+.wrap-login100 {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

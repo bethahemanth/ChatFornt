@@ -1,8 +1,19 @@
 <div class="chat-container">
     <div class="chat-header">
         <div class="profile">
-            <img *ngIf="receiverProfilePicture" [src]="receiverProfilePicture" alt="{{ receiver }}" class="profile-pic">
+            <img *ngIf="receiverProfilePicture" 
+                 [src]="receiverProfilePicture" 
+                 alt="{{ receiver }}" 
+                 class="profile-pic"
+                 (click)="toggleProfilePicPopup()">
             <span class="receiver-name">{{ receiver }}</span>
+        </div>
+    </div>
+
+    <div *ngIf="showProfilePicPopup" class="profile-pic-popup">
+        <div class="popup-content">
+            <img [src]="receiverProfilePicture" alt="{{ receiver }}" class="popup-profile-pic">
+            <button class="close-btn" (click)="showProfilePicPopup = false">Close</button>
         </div>
     </div>
 
@@ -11,14 +22,18 @@
              [ngClass]="{'sent': message.sender_id === user.user_id, 'received': message.sender_id !== user.user_id}">
             <div class="message-content">
                 <p>{{ message.message }}</p>
-                <span class="timestamp">{{ message.created_at | date:'shortTime' }}</span>
+                <div class="message-footer">
+                    <span class="timestamp">{{ message.created_at | date:'shortTime' }}</span>
+                    <button class="delete-button" (click)="deleteMessage(message.message_id)">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>    
 
     <div *ngIf="messages.length === 0" class="no-messages">No messages yet</div>
 
-    <!-- 🔹 Message Input Box -->
     <div class="text-box">
         <form (ngSubmit)="sendMessage()">
             <input type="text" [(ngModel)]="messageText" name="messageText" placeholder="Type a message..." required class="message-input">

@@ -1,7 +1,7 @@
 import { Message } from './../Models/Message';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,20 @@ export class APIServiceService {
 
   constructor(private http: HttpClient) { }
 
+  CustomAlert(message: string) {
+    const notification = document.createElement('div');
+    notification.className = 'custom-alert';
+    notification.innerText = message;
+ 
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.add('fade-out');
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 500); 
+    }, 2500);
+  }
+
   ValidateUser(Email: string, password: string): Observable<any> {
     const validateUrl = `${this.url}/ValidateUser?Email=${Email}&Password=${password}`;
     return this.http.get<any>(validateUrl);
@@ -20,10 +34,17 @@ export class APIServiceService {
   UploadProfilePicture(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-  
     return this.http.post<{ imageUrl: string }>('http://localhost:5195/api/User/UploadProfilePicture', formData);
   }
 
+  GetLastestUserById(user_id: number): Observable<any> {
+    const getUserUrl = `http://localhost:5195/api/User/GetLastestUserById?user_id=${user_id}`;
+    
+    return this.http.get<any>(getUserUrl).pipe(
+      tap(response => console.log('User latest data', response)) // Print response using tap
+    );
+  }
+  
   RegisterUser(user: any): Observable<any> {
     const registerUrl = `${this.url}/Register`;
     return this.http.post(registerUrl, user, { responseType: 'text' });
@@ -34,6 +55,13 @@ export class APIServiceService {
     return this.http.get<any>(getUserUrl);
   }
 
+  GetUserById1(userId: number): Observable<any> {
+    const url = `http://localhost:5195/api/User/GetUserById1?user_id=${userId}`;
+    return this.http.get<any>(url).pipe(
+      tap(response => console.log('Fetched user by ID:', response)) // Log the response for debugging
+    );
+  }
+  
   GetUserByID(id: number): Observable<any> {
     return this.http.get<any>(`${this.url}/GetUserByID?id=${id}`).pipe(
       map((user: any) => {
@@ -80,6 +108,7 @@ export class APIServiceService {
     const getGroupsUrl = `http://localhost:5195/api/groups/groupid/${id}`;
     return this.http.get<any>(getGroupsUrl);
   }
+
   GetGroupInfo(id: number): Observable<any> {
     const getGroupUrl = `http://localhost:5195/api/groups/GetGroupInfo?id=${id}`;
     return this.http.get<any>(getGroupUrl);
@@ -92,7 +121,6 @@ export class APIServiceService {
 
   GetGroupOwner(id: number): Observable<any> {
     const getGroupOwnerUrl = `http://localhost:5195/api/groups/owner/${id}`;
-    // const getGroupOwnerUrl = `http://localhost:5195/api/groups/GetGroupOwner?id=${id}`;
     return this.http.get<any>(getGroupOwnerUrl);
   }
 
@@ -115,6 +143,7 @@ export class APIServiceService {
     }
     return this.http.post(addUserUrl, dto, { responseType: 'text' });
   }
+  
   DeleteUserFromGroup(groupId: number, userId: number): Observable<any> {
     const deleteUserUrl = `http://localhost:5195/api/groupmembers/delete/${userId}?group_id=${groupId}`;
     return this.http.delete(deleteUserUrl, { responseType: 'text' });
@@ -130,5 +159,11 @@ export class APIServiceService {
     return this.http.delete(deleteGroupUrl, { responseType: 'text' });
   }
 
+  DeleteMessage(messageId: number): Observable<any> {
+    const deleteMessageUrl = `http://localhost:5195/api/messages/delete/${messageId}`;
+    return this.http.delete(deleteMessageUrl, { responseType: 'text' });
+  }
+
+  
 
 }

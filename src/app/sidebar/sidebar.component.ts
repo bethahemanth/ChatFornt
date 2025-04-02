@@ -3,8 +3,10 @@ import { APIServiceService } from "../Services/apiservice.service";
 import { UserService } from "../Services/user.service";
 import { UserDetails } from "../Models/UserDetails";
 import { Router } from '@angular/router';
-import { MessageNotificationService } from '../Services/message-notification.service';  // Import the service
-import { Group } from '../Models/Group'; // Assuming you have a Group model defined
+import { MessageNotificationService } from '../Services/message-notification.service';  
+import { Group } from '../Models/Group'; 
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -14,11 +16,14 @@ import { Group } from '../Models/Group'; // Assuming you have a Group model defi
 export class SidebarComponent implements OnInit, OnDestroy {
   contacts: UserDetails[] = [];
   filteredContacts: UserDetails[] = [];
-  groups: Group[] = []; // Assuming you have a Group model defined
+  groups: Group[] = []; 
   filteredGroups: Group[] = [];
   searchQuery: string = '';
-  private messageSentSubscription: any;
+  private messageSentSubscription!: Subscription;
   showMenu: boolean = false;
+  currentchat: number = -1;
+  oldchat: number = -1;
+  private user!: UserDetails;
 
   constructor(
     private api: APIServiceService,
@@ -29,90 +34,51 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const userString = localStorage.getItem('user');
-    const user: UserDetails = userString ? JSON.parse(userString) : null;
-    if (!user) {
+    this.user = userString ? JSON.parse(userString) : null;
+    if (!this.user) {
       console.error('User not found in localStorage');
       return;
     }
 
-    this.api.GetContact(user.user_id).subscribe(
-      (data: number[]) => {
-        console.log("User receiver id for contacts", data);
-
-        if (data.length === 0) {
-          console.log("No contacts found. Waiting for new messages...");
-          return;
-        }
-
-        this.api.GetUsersSet(data).subscribe(
-          (users: UserDetails[]) => {
-            this.contacts = users;
-            this.filteredContacts = users; // Initialize filteredContacts
-            console.log("User Contacts", this.contacts);
-          },
-          (error) => {
-            console.log("Error fetching users:", error);
-          }
-        );
-      },
-      (error) => {
-        console.log("Error fetching contacts:", error);
-      }
-    );
-
-    // Fetch groups
-    this.api.GetGroupsOfUser(user.user_id).subscribe(
-      (groupIds: number[]) => {
-        if (groupIds.length === 0) {
-          console.log("No groups found.");
-          return;
-        }
-
-        const groupRequests = groupIds.map(groupId =>
-          this.api.GetGroupInfo(groupId)
-        );
-
-        Promise.all(groupRequests.map(req => req.toPromise())).then(
-          (groups: Group[]) => {
-            this.groups = groups;
-            this.filteredGroups = groups;
-          },
-          (error) => {
-            console.error("Error fetching group info:", error);
-          }
-        );
-      },
-      (error) => {
-        console.error("Error fetching groups:", error);
-      }
-    );
-
-    // Subscribe to the messageSent observable
-    this.messageSentSubscription = this.messageNotificationService.messageSent$.subscribe(() => {
-      this.reloadContacts();
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.messageSentSubscription) {
-      this.messageSentSubscription.unsubscribe();
-    }
-  }
-
-  // ✅ Load contacts initially
-  loadContacts() {
-    const userString = localStorage.getItem('user');
-    const user: UserDetails = userString ? JSON.parse(userString) : null;
+    this.fetchLatestUserById(this.user.user_id);
+    this.loadContacts();
+    this.loadGroups(this.user.user_id);
     
-    if (!user) {
-      console.error('User not found in localStorage');
-      return;
-    }
+  }
+  
 
-    this.api.GetContact(user.user_id).subscribe(
+  fetchLatestUserById(user_id: number): void {
+    this.api.GetLastestUserById(user_id).subscribe(
+      (response: any) => {
+        console.log("Fetched latest user ID:", response);
+
+        if (this.currentchat === -1) {
+          this.currentchat = response;
+          this.oldchat = response;
+          this.router.navigate(['chat'], { queryParams: { id: response } });
+        } 
+        else if (response !== this.currentchat) {
+          this.oldchat = this.currentchat;  
+          this.currentchat = response;
+
+          this.api.CustomAlert("New message received from user ID: " + response);
+        }
+
+        console.log("Current chat: " + this.currentchat + " | Old chat: " + this.oldchat);
+      },
+      (error) => {
+        console.error('Error fetching latest user data:', error);
+      }
+    );
+}
+
+
+
+  loadContacts() {
+    if (!this.user) return;
+
+    this.api.GetContact(this.user.user_id).subscribe(
       (data: number[]) => {
-        console.log("User receiver id for contacts:", data);
-
         if (data.length === 0) {
           console.log("No contacts found. Waiting for new messages...");
           return;
@@ -123,22 +89,43 @@ export class SidebarComponent implements OnInit, OnDestroy {
             this.processProfilePictures(users);
             this.contacts = users;
             this.filteredContacts = users;
-            console.log("User Contacts:", this.contacts);
           },
-          (error) => console.log("Error fetching users:", error)
+          (error) => console.error("Error fetching users:", error)
         );
       },
-      (error) => console.log("Error fetching contacts:", error)
+      (error) => console.error("Error fetching contacts:", error)
     );
   }
 
-  // ✅ Reload contacts when a message is sent
-  reloadContacts() {
-    console.log("Reloading contacts...");
-    this.loadContacts(); // Just call the loadContacts function
+  loadGroups(userId: number) {
+    this.api.GetGroupsOfUser(userId).subscribe(
+      (groupIds: number[]) => {
+        if (groupIds.length === 0) {
+          console.log("No groups found.");
+          return;
+        }
+
+        const groupRequests = groupIds.map(groupId => this.api.GetGroupInfo(groupId).toPromise());
+        Promise.all(groupRequests).then(
+          (groups: Group[]) => {
+            this.groups = groups;
+            this.filteredGroups = groups;
+          },
+          (error) => console.error("Error fetching group info:", error)
+        );
+      },
+      (error) => console.error("Error fetching groups:", error)
+    );
   }
 
-  // ✅ Prevent duplicate URLs in profile pictures
+  reloadContacts() {
+    console.log("Reloading contacts...");
+    if (this.user) {
+      this.fetchLatestUserById(this.user.user_id);
+      this.loadContacts();
+    }
+  }
+
   private processProfilePictures(users: UserDetails[]) {
     users.forEach(user => {
       if (user.profile_picture && !user.profile_picture.startsWith('http://localhost:5195/uploads/')) {
@@ -147,12 +134,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ✅ Filter contacts based on search query
   filterContacts(): void {
     const query = this.searchQuery.toLowerCase().trim();
     this.filteredContacts = this.contacts.filter(contact =>
-      contact.username.toLowerCase().includes(query) || 
-      contact.phone_number.includes(query)
+      contact.username.toLowerCase().includes(query) || contact.phone_number.includes(query)
     );
   }
 
@@ -171,4 +156,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.router.navigate(['']);
     this.userService.clearUser();
   }
-}
+
+  ngOnDestroy() {
+    if (this.messageSentSubscription) {
+      this.messageSentSubscription.unsubscribe();
+    }
+  }
+} 

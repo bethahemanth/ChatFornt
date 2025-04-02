@@ -24,16 +24,12 @@ export class ChatService {
       console.error('Error starting connection: ', err);
     });
 
-    // Listen for messages from the server
     this.hubConnection.on('ReceiveMessage', (sender: string, receiver: string, message: string) => {
       const newMessage = { sender, receiver, message };
       this.messagesSubject.next([...this.messagesSubject.getValue(), newMessage]);
     });
   }
 
-  
-
-  // Optionally, you can stop the connection when done
   public stopConnection(): void {
     this.hubConnection.stop();
   }

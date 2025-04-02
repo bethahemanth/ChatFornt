@@ -104,3 +104,91 @@
 .send-button:hover {
   background-color: #0056b3;
 }
+
+.message-content {
+  position: relative;
+}
+
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #888;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.delete-button:hover {
+  color: #e74c3c;
+}
+
+.delete-button i {
+  font-size: 16px;
+}
+
+/* Profile picture popup */
+.profile-pic-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Make sure the popup is on top of other content */
+}
+
+.popup-content {
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensuring the profile picture is a square */
+.popup-profile-pic {
+  width: 200px;    /* Fixed width */
+  height: 200px;   /* Fixed height */
+  object-fit: cover;  /* Ensure the image fits the square while preserving its aspect ratio */
+  border-radius: 10px; /* Optional: rounded corners for a nicer look */
+}
+
+/* Close button styling */
+.close-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.close-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Profile image in the chat header (optional) */
+.profile-pic {
+  width: 50px;   /* Set the profile image size in the header */
+  height: 50px;  /* Set the profile image size */
+  object-fit: cover; /* Ensure image is cropped properly if not a square */
+  border-radius: 50%;  /* Circular image */
+  cursor: pointer;  /* Make the image clickable */
+}

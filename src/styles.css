@@ -31,3 +31,54 @@ app-group-chat{
     align-items: center;
     justify-content: flex-start;
 }
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #0078ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 1000;
+    animation: fadeInOut 2s ease-in-out;
+  }
+  
+  /* Optional: Add a fade-in and fade-out animation */
+  /* Global styles for the custom alert notification */
+.custom-alert {
+    position: fixed;
+    top: 20px; /* Position the alert at the top */
+    left: 50%;
+    transform: translateX(-50%); /* Center the alert horizontally */
+    background-color: #28a745; /* Green background for success */
+    color: white; /* White text color */
+    padding: 20px 30px; /* Increased padding for a larger box */
+    border-radius: 8px; /* Slightly more rounded corners */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow for better visibility */
+    font-size: 20px; /* Increased font size for the text */
+    font-weight: bold; /* Make the text bold */
+    z-index: 1000; /* Ensure the alert appears above other elements */
+    opacity: 1; /* Fully visible initially */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth fade-out and slide-up effect */
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center content vertically */
+    gap: 15px; /* Space between icon and text */
+    max-width: 500px; /* Limit the width of the alert box */
+    text-align: center; /* Center-align the text */
+  }
+  
+  /* Fade-out animation */
+  .custom-alert.fade-out {
+    opacity: 0; /* Fade out the alert */
+    transform: translateX(-50%) translateY(-20px); /* Slide up the alert */
+  }
+  
+  /* Optional: Add a fade-in and fade-out animation */
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }

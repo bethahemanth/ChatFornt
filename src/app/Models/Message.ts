@@ -7,4 +7,6 @@ export interface Message {
     message: string;
     created_at: Date; // Use Date for timestamps
     destroy_at: Date; // Use Date for timestamps
+    isRead?:boolean;
+    
 }

@@ -29,7 +29,7 @@ export class LoginComponent {
 
   Email: string = '';
   password: string = '';
-  nextPage: string = '/dashboard'; // Example route after successful login
+  nextPage: string = ''; // Example route after successful login
   maxDate: string;
 
   constructor(
@@ -59,7 +59,7 @@ export class LoginComponent {
         },
         error => {
           console.error('Image upload failed:', error);
-          alert('Failed to upload image. Please try again.');
+          this.apiService.CustomAlert('Failed to upload image. Please try again.');
         }
       );
     }
@@ -71,7 +71,7 @@ export class LoginComponent {
     this.apiService.ValidateUser(this.Email, this.password).subscribe(
       (data: any) => {
         if (data) {
-          alert("Login Successful");
+          this.apiService.CustomAlert("Login Successful");
           this.apiService.GetUser(this.Email, this.password).subscribe(
             (userRes: UserDetails) => {
               this.userService.setUser(userRes);
@@ -80,16 +80,16 @@ export class LoginComponent {
             },
             (error) => {
               console.error('Error fetching user details:', error);
-              alert('An error occurred while retrieving user details. Please try again.');
+              this.apiService.CustomAlert('An error occurred while retrieving user details. Please try again.');
             }
           );
         } else {
-          alert('Invalid Credentials');
+          this.apiService.CustomAlert('Invalid Credentials');
         }
       },
       (error) => {
         console.error('Error during login validation:', error);
-        alert('An error occurred. Please try again.');
+        this.apiService.CustomAlert('An error occurred. Please try again.');
       }
     );
   }
@@ -99,12 +99,12 @@ export class LoginComponent {
     console.log('Registration Data:', this.registerData);
     this.apiService.RegisterUser(this.registerData).subscribe(
       () => {
-        alert('Registration Successful!');
+        this.apiService.CustomAlert('Registration Successful!');
         this.router.navigate(['/login']);
       },
       (error) => {
         console.error('Error during registration:', error);
-        alert('An error occurred during registration. Please try again.');
+        this.apiService.CustomAlert('An error occurred during registration. Please try again.');
       }
     );
   }
